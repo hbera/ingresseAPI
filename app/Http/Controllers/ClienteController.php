@@ -3,9 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Cliente;
 
 class ClienteController extends Controller
 {
+    private $cliente;
+    public function __construct(Cliente $cliente)
+    {
+        $this->cliente = $cliente;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -13,7 +20,7 @@ class ClienteController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json($this->cliente->paginate(10));
     }
 
     /**
@@ -24,7 +31,19 @@ class ClienteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try
+        {
+            $infoCliente = $request->all();
+            $this->cliente->create($infoCliente);
+
+        } 
+        catch (\Exception $e) 
+        {
+            return response()->json([
+                "message" => "Erro ao salvar", 
+                "exception" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -35,7 +54,12 @@ class ClienteController extends Controller
      */
     public function show($id)
     {
-        //
+        $cliente = $this->cliente->find($id);
+
+        if( $cliente )
+            return response()->json("Usuário não encontrado", 404);
+
+        return response()->json( ["data" => $cliente]);
     }
 
     /**
@@ -47,7 +71,23 @@ class ClienteController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try
+        {
+            $infoCliente = $request->all();
+            $cliente = $this->cliente->find($id);
+            $cliente->update($infoCliente);
+
+            return response()->json([
+                'data' => [ 'message' => 'Cliente atualizado com sucesso!']
+            ],201);
+        }
+        catch(\Exception $e)
+        {
+            return response()->json([
+                "message" => "Erro ao atualizar", 
+                "exception" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -56,8 +96,25 @@ class ClienteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function delete($id)
     {
-        //
+        try
+        {
+            $cliente = $this->cliente->find($id);
+            $nomeCliente = $cliente->nome;
+            $cliente->delete();
+            return response()->json([
+                'data' => [
+                    'message' => "Cliente {$nomeCliente} teve seu registro removido"
+                ]
+            ],200);
+        }
+        catch( \Exception $e)
+        {
+            return response()->json([
+                "message" => "Erro ao remover registro", 
+                "exception" => $e->getMessage()
+            ], 500);
+        }
     }
 }
