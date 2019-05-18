@@ -34,8 +34,10 @@ class ClienteController extends Controller
         try
         {
             $infoCliente = $request->all();
-            $this->cliente->create($infoCliente);
-
+            $cliente = $this->cliente->create($infoCliente);
+            $lastInsertId = $cliente->id;
+            $clinte = $this->cliente->find($lastInsertId);
+            return response()->json(['data' => $cliente], 200);
         } 
         catch (\Exception $e) 
         {
@@ -56,7 +58,7 @@ class ClienteController extends Controller
     {
         $cliente = $this->cliente->find($id);
 
-        if( $cliente )
+        if( !$cliente )
             return response()->json("Usuário não encontrado", 404);
 
         return response()->json( ["data" => $cliente]);

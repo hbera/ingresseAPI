@@ -12,13 +12,13 @@
 */
 
 $router->get('/', function () use ($router) {
-    return $router->app->version();
+    return "Ingresse API ".$router->app->version();
 });
 
 $router->group(['prefix' => 'cliente'], function () use ($router){
     $router->get("/", ['as' => 'cliente.lista', 'uses' => 'ClienteController@index'] );
-    $router->post("/" , ['as' => 'cliente.salvar', 'uses' => 'ClienteController@store']);
-    $router->get("/{id}", ['as' => 'cliente.mostrar', 'uses' => 'ClienteController@show']);
-    $router->put("/{id}", ['as' => 'cliente.atualizar', 'uses' => 'ClienteController@update']);
+    $router->post("/salvar" , ['as' => 'cliente.salvar', 'uses' => 'ClienteController@store']);
+    $router->get("/info/{id}", ['as' => 'cliente.mostrar', 'uses' => 'ClienteController@show']);
+    $router->put("/atualizar/{id}", ['as' => 'cliente.atualizar', 'uses' => 'ClienteController@update']);
     $router->delete("/{id}", ['as' => 'cliente.remover', 'uses' => 'ClienteController@delete']);
 });
